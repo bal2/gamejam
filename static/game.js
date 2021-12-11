@@ -133,7 +133,8 @@ function drawSprite(imgX, imgY, locX, locY) {
 function drawPlayers(players) {
     for (var id in players) {
         var player = players[id];
-        drawSprite(0, 1, player.x, player.y);
+
+        drawSprite(player.sprite % 4, (player.sprite % 2)+1, player.x, player.y);
 
         if (id == socket.id) {
             context.beginPath();

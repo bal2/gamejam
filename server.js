@@ -43,7 +43,8 @@ io.on('connection', (socket) => {
             x: values.SPRITE_SIZE * 5,
             y: values.SPRITE_SIZE * 5,
             name: getName(),
-            points: 0
+            points: 0,
+            sprite: 0
         };
     });
 
@@ -138,8 +139,17 @@ function movePlayer(data, id) {
         handleCollision(pBottom * 25 + pLeft, player) &&
         handleCollision(pBottom * 25 + pRight, player)
     ) {
+
+        if (player.x != newPos.x || player.y != newPos.y) {
+            player.sprite++;
+
+            if (player.sprite % 8 == 0)
+                player.sprite = 0;
+        }
+
         player.x = newPos.x;
         player.y = newPos.y;
+
     }
 
 }
