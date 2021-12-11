@@ -77,8 +77,10 @@ setInterval(() => {
     }
 }, 10000);
 
+var nCounter = 0;
+
 function getName() {
-    let n = values.NAMES[Object.keys(gameState.players).length % values.NAMES.length];
+    let n = values.NAMES[nCounter % values.NAMES.length];
 
     let existing = 0;
 
@@ -89,6 +91,7 @@ function getName() {
 
     if (existing > 0) n = n + "_" + existing;
 
+    nCounter++;
     return n;
 }
 
@@ -149,6 +152,6 @@ function handleCollision(pos, player) {
         gameState.map[pos] = 0;
         player.points++;
     }
-    
+
     return true;
 }
