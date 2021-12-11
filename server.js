@@ -40,7 +40,9 @@ io.on('connection', (socket) => {
     socket.on('new player', () => {
         gameState.players[socket.id] = {
             x: values.SPRITE_SIZE * 5,
-            y: values.SPRITE_SIZE * 5
+            y: values.SPRITE_SIZE * 5,
+            name: getName(),
+            points: 0
         };
     });
 
@@ -74,6 +76,21 @@ setInterval(() => {
         }
     }
 }, 10000);
+
+function getName() {
+    let n = values.NAMES[Object.keys(gameState.players).length % values.NAMES.length];
+
+    let existing = 0;
+
+    for (let id in gameState.players) {
+        let p = gameState.players[id];
+        if (p.name.includes(n)) existing++;
+    }
+
+    if (existing > 0) n = n + "_" + existing;
+
+    return n;
+}
 
 
 //Player movement
@@ -111,10 +128,10 @@ function movePlayer(data, id) {
 
     //Handle collision for all sides of player
     if (
-        handleCollision(pTop * 25 + pLeft) &&
-        handleCollision(pTop * 25 + pRight) &&
-        handleCollision(pBottom * 25 + pLeft) &&
-        handleCollision(pBottom * 25 + pRight)
+        handleCollision(pTop * 25 + pLeft, player) &&
+        handleCollision(pTop * 25 + pRight, player) &&
+        handleCollision(pBottom * 25 + pLeft, player) &&
+        handleCollision(pBottom * 25 + pRight, player)
     ) {
         player.x = newPos.x;
         player.y = newPos.y;
@@ -122,16 +139,16 @@ function movePlayer(data, id) {
 
 }
 
-function handleCollision(pos) {
+function handleCollision(pos, player) {
     let tile = gameState.map[pos];
 
-    if (tile == 1) {
+    if (tile == 1 || tile == 3) {
         return false;
     }
-    else if(tile == 2) {
+    else if (tile == 2) {
         gameState.map[pos] = 0;
+        player.points++;
     }
-        
     
     return true;
 }

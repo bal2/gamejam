@@ -1,13 +1,21 @@
 <html>
-  <head>
-    <title>Christmas game jam</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
-    <script src="/socket.io/socket.io.js"></script>
-  </head>
-  <body>
-    <canvas id="canvas"></canvas>
-  </body>
-  <script src="/shared/values.js"></script>
-  <script src="/shared/maps.js"></script>
-  <script src="/static/game.js"></script>
+
+<head>
+  <title>Christmas game jam</title>
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="scoreboard">
+    <h4>Reindeer:</h4>
+    <div id="players">
+    </div>
+  </div>
+</body>
+<script src="/shared/values.js"></script>
+<script src="/shared/maps.js"></script>
+<script src="/static/game.js"></script>
+
 </html>
