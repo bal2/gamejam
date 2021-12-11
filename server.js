@@ -44,7 +44,9 @@ io.on('connection', (socket) => {
             y: values.SPRITE_SIZE * 5,
             name: getName(),
             points: 0,
-            sprite: 0
+            sprite: 0,
+            speedBoost: null,
+            extraPoints: null
         };
     });
 
@@ -63,12 +65,14 @@ function sendState() {
     io.sockets.emit('state', gameState);
 }
 
+//State update interval
 setInterval(() => {
     sendState();
 }, 1000 / 60);
 
+//Present spawn interval
 setInterval(() => {
-    let numPres = gameState.map.filter(x => x == 2).length;
+    let numPres = gameState.map.filter(x => x == 2 || x == 3).length;
 
     if (numPres < 5) {
         let pos = Math.floor(Math.random() * gameState.map.length);
@@ -78,7 +82,21 @@ setInterval(() => {
             sendState();
         }
     }
-}, 10000);
+}, 5000);
+
+//Bonus spawn interval
+setInterval(() => {
+    let numPres = gameState.map.filter(x => x == 2 || x == 3).length;
+
+    if (numPres < 5) {
+        let pos = Math.floor(Math.random() * gameState.map.length);
+        if (gameState.map[pos] == 0) {
+            gameState.map[pos] = 3;
+            gameState.mapUs = new Date();
+            sendState();
+        }
+    }
+}, 59000);
 
 var nCounter = 0;
 
@@ -100,13 +118,23 @@ function getName() {
 
 
 //Player movement
-const moveSpeed = 4;
-
 function movePlayer(data, id) {
     let player = gameState.players[id] || {};
 
     if (player == {})
         return;
+
+    let moveSpeed = 4;
+
+    if (player.speedBoost != null) {
+        if (player.speedBoost > new Date())
+            moveSpeed += 2;
+        else
+            player.speedBoost = null;
+    }
+
+    if (player.extraPoints < new Date())
+        player.extraPoints = null;
 
     let newPos = {
         x: player.x,
@@ -164,6 +192,22 @@ function handleCollision(pos, player) {
         gameState.map[pos] = 0;
         gameState.mapUs = new Date();
         player.points++;
+
+        if (player.extraPoints != null)
+            player.points += 2;
+    }
+    else if (tile == 3) {
+        gameState.map[pos] = 0;
+        gameState.mapUs = new Date();
+
+        let p = Math.floor(Math.random() * 2);
+        let b = new Date();
+        b.setSeconds(b.getSeconds() + 10);
+
+        if (p == 0)
+            player.speedBoost = b;
+        else if (p == 1)
+            player.extraPoints = b;
     }
 
     return true;

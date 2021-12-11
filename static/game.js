@@ -69,6 +69,9 @@ function drawMap(map) {
                 case 2:
                     drawSprite(5, 0, j * 32, i * 32);
                     break;
+                case 3:
+                    drawSprite(4, 0, j * 32, i * 32);
+                    break;
                 case 11:
                     drawSprite(11, 0, j * 32, i * 32);
                     break;
@@ -133,17 +136,22 @@ function drawPlayers(players) {
     for (var id in players) {
         var player = players[id];
 
-        drawSprite(player.sprite % 4, (player.sprite % 2)+1, player.x, player.y);
+        drawSprite(player.sprite % 4, (player.sprite % 2) + 1, player.x, player.y);
+
+        if (player.extraPoints != null || player.speedBoost != null)
+            drawSprite(16, (player.sprite % 4) + 5, player.x, player.y);
 
         if (id == socket.id) {
             context.beginPath();
-            context.strokeStyle = '#f00';  // some color/style
-            context.lineWidth = 1;         // thickness
+            context.strokeStyle = '#ffc6c6';
+            context.lineWidth = 1;
             context.strokeRect(player.x, player.y, SPRITE_SCALE * SPRITE_SIZE, SPRITE_SCALE * SPRITE_SIZE);
 
         }
     }
 }
+
+
 
 function drawScoreboard(players) {
     let y = 40;
@@ -151,9 +159,21 @@ function drawScoreboard(players) {
         var player = players[id];
 
         context.font = "20px Arial";
-context.fillStyle = "black";
-context.strokeStyle = 'black';  // some color/style
-        context.strokeText(player.points + "p " + player.name, GRID_WIDTH + 10, y); 
+
+        if (player.speedBoost != null) {
+            context.fillStyle = "blue";
+            context.strokeStyle = 'blue';
+        }
+        else if (player.extraPoints != null) {
+            context.fillStyle = "#c8bb00";
+            context.strokeStyle = "#c8bb00";
+        }
+        else {
+            context.fillStyle = "black";
+            context.strokeStyle = 'black';
+        }
+
+        context.strokeText(player.points + "p " + player.name, GRID_WIDTH + 10, y);
 
         y = y + 25;
     }
