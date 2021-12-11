@@ -45,8 +45,8 @@ setInterval(() => {
 }, 1000 / 60);
 
 var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 608;
+canvas.width = GRID_WIDTH;
+canvas.height = GRID_HEIGHT;
 
 var context = canvas.getContext('2d');
 
@@ -58,36 +58,34 @@ socket.on('state', (players) => {
 let img = new Image();
 img.src = '/static/sprite1.png';
 
-const SCALE = 2;
-const WIDTH = 16;
-const HEIGHT = 16;
-
 function drawMap(id) {
-    if(!img.complete)
+    if (!img.complete)
         return;
 
-    for(var i = 0; i < MAPS[id].length; i++) {
-        var row = MAPS[id][i];
-        
-        for(let j = 0; j < row.length; j++) {
-            var col = row[j];
-            
-            if(col == 1)
-            {
-                drawSprite(11,0,j*32,i*32);
-            }
+    for (let i = 0; i < 19; i++) {
+        for (let j = 0; j < 25; j++) {
+            if (MAPS[id][i * 25 + j] == 1)
+                drawSprite(11, 0, j * 32, i * 32)
         }
     }
 }
 
 function drawSprite(imgX, imgY, locX, locY) {
-    context.drawImage(img, imgX * WIDTH, imgY * HEIGHT, WIDTH, HEIGHT, locX, locY, SCALE * WIDTH, SCALE * HEIGHT);
+    context.drawImage(img, imgX * SPRITE_SIZE, imgY * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE, locX, locY, SPRITE_SCALE * SPRITE_SIZE, SPRITE_SCALE * SPRITE_SIZE);
 }
 
 function drawPlayers(players) {
     for (var id in players) {
         var player = players[id];
         drawSprite(0, 1, player.x, player.y);
+
+        if (id == socket.id) {
+            context.beginPath();
+            context.strokeStyle = '#f00';  // some color/style
+            context.lineWidth = 1;         // thickness
+            context.strokeRect(player.x, player.y, SPRITE_SCALE * SPRITE_SIZE, SPRITE_SCALE * SPRITE_SIZE);
+
+        }
     }
 }
 
