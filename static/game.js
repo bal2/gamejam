@@ -45,14 +45,13 @@ setInterval(() => {
 }, 1000 / 60);
 
 var canvas = document.getElementById('canvas');
-canvas.width = GRID_WIDTH;
+canvas.width = GRID_WIDTH + 150;
 canvas.height = GRID_HEIGHT;
 
 var context = canvas.getContext('2d');
 
 socket.on('state', (state) => {
     drawScreen(state.players, state.map, state.mapUs);
-    writePlayers(state.players);
 });
 
 // DRAWING
@@ -146,53 +145,23 @@ function drawPlayers(players) {
     }
 }
 
+function drawScoreboard(players) {
+    let y = 40;
+    for (var id in players) {
+        var player = players[id];
+
+        context.font = "20px Arial";
+context.fillStyle = "black";
+context.strokeStyle = 'black';  // some color/style
+        context.strokeText(player.points + "p " + player.name, GRID_WIDTH + 10, y); 
+
+        y = y + 25;
+    }
+}
+
 function drawScreen(players, map, us) {
-    context.clearRect(0, 0, 800, 600);
+    context.clearRect(0, 0, GRID_WIDTH + 150, GRID_HEIGHT);
     drawPlayers(players);
-
+    drawScoreboard(players);
     drawMap(map);
-}
-
-//Player list
-var playerListHtml = document.getElementById("players");
-var playerListArr = [];
-
-function writePlayers(players) {
-    let pList = [];
-
-    for (let id in players) {
-        let p = players[id];
-        pList.push({ name: p.name, points: p.points });
-    }
-
-    //Only change DOM if actual change in players
-    if (!arraysEqual(pList, playerListArr)) {
-        playerListArr = pList;
-        console.log("redraw");
-        playerListHtml.innerHTML = '';
-        let ul = document.createElement('ul');
-        playerListHtml.appendChild(ul);
-
-        playerListArr.forEach(p => {
-
-            let li = document.createElement('li');
-            ul.appendChild(li);
-            li.innerHTML = p.name + " <b>" + p.points + "p</b>";
-        });
-
-    }
-}
-
-function arraysEqual(a, b) {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (a.length !== b.length) return false;
-
-    a.sort();
-    b.sort();
-
-    for (var i = 0; i < a.length; ++i) {
-        if (a[i].name != b[i].name || a[i].points != b[i].points) return false;
-    }
-    return true;
 }
