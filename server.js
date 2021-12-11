@@ -29,7 +29,8 @@ server.listen(5000, () => {
 
 var gameState = {
     players: {},
-    map: []
+    map: [],
+    mapUs: new Date()
 };
 
 gameState.map = maps.MAPS[0];
@@ -72,6 +73,7 @@ setInterval(() => {
         let pos = Math.floor(Math.random() * gameState.map.length);
         if (gameState.map[pos] == 0) {
             gameState.map[pos] = 2;
+            gameState.mapUs = new Date();
             sendState();
         }
     }
@@ -145,11 +147,12 @@ function movePlayer(data, id) {
 function handleCollision(pos, player) {
     let tile = gameState.map[pos];
 
-    if (tile == 1 || tile == 3) {
+    if (tile > 10) {
         return false;
     }
     else if (tile == 2) {
         gameState.map[pos] = 0;
+        gameState.mapUs = new Date();
         player.points++;
     }
 
