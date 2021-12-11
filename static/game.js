@@ -50,22 +50,26 @@ canvas.height = GRID_HEIGHT;
 
 var context = canvas.getContext('2d');
 
-socket.on('state', (players) => {
-    drawScreen(players, 0);
+socket.on('state', (state) => {
+    drawScreen(state.players, state.map);
 });
 
 // DRAWING
 let img = new Image();
 img.src = '/static/sprite1.png';
 
-function drawMap(id) {
+function drawMap(map) {
     if (!img.complete)
         return;
 
     for (let i = 0; i < 19; i++) {
         for (let j = 0; j < 25; j++) {
-            if (MAPS[id][i * 25 + j] == 1)
-                drawSprite(11, 0, j * 32, i * 32)
+            let tile = map[i * 25 + j];
+            if (tile == 1)
+                drawSprite(11, 0, j * 32, i * 32);
+            else if (tile == 2)
+                drawSprite(5, 0, j * 32, i * 32);
+
         }
     }
 }

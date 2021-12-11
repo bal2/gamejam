@@ -27,21 +27,26 @@ server.listen(5000, () => {
 
 // WebSocket handlers
 
-var players = {};
+var gameState = {
+    players: {},
+    map: []
+};
+
+gameState.map = maps.MAPS[0];
+
 io.on('connection', (socket) => {
 
     //join
     socket.on('new player', () => {
-        players[socket.id] = {
+        gameState.players[socket.id] = {
             x: values.SPRITE_SIZE * 5,
-            y: values.SPRITE_SIZE * 5,
-            map: 0
+            y: values.SPRITE_SIZE * 5
         };
     });
 
     //bye bye
     socket.on('disconnect', () => {
-        delete players[socket.id];
+        delete gameState.players[socket.id];
     });
 
     //move me baby
@@ -50,16 +55,32 @@ io.on('connection', (socket) => {
     });
 });
 
+function sendState() {
+    io.sockets.emit('state', gameState);
+}
+
 setInterval(() => {
-    io.sockets.emit('state', players);
+    sendState();
 }, 1000 / 60);
+
+setInterval(() => {
+    let numPres = gameState.map.filter(x => x == 2).length;
+
+    if (numPres < 5) {
+        let pos = Math.floor(Math.random() * gameState.map.length);
+        if (gameState.map[pos] == 0) {
+            gameState.map[pos] = 2;
+            sendState();
+        }
+    }
+}, 10000);
 
 
 //Player movement
 const moveSpeed = 4;
 
 function movePlayer(data, id) {
-    let player = players[id] || {};
+    let player = gameState.players[id] || {};
 
     if (player == {})
         return;
@@ -82,24 +103,35 @@ function movePlayer(data, id) {
         newPos.y += moveSpeed;
     }
 
+    //Get player rectangle
     let pTop = Math.floor(newPos.y / (values.SPRITE_SIZE * values.SPRITE_SCALE));
     let pBottom = Math.floor((newPos.y + 32) / (values.SPRITE_SIZE * values.SPRITE_SCALE));
     let pLeft = Math.floor(newPos.x / (values.SPRITE_SIZE * values.SPRITE_SCALE));
     let pRight = Math.floor((newPos.x + 32) / (values.SPRITE_SIZE * values.SPRITE_SCALE));
 
-    if (maps.MAPS[player.map][pTop * 25 + pLeft] > 0)
-        return;
-    if (maps.MAPS[player.map][pTop * 25 + pRight] > 0)
-        return;
-    if (maps.MAPS[player.map][pBottom * 25 + pLeft] > 0)
-        return;
-    if (maps.MAPS[player.map][pBottom * 25 + pRight] > 0)
-        return;
+    //Handle collision for all sides of player
+    if (
+        handleCollision(pTop * 25 + pLeft) &&
+        handleCollision(pTop * 25 + pRight) &&
+        handleCollision(pBottom * 25 + pLeft) &&
+        handleCollision(pBottom * 25 + pRight)
+    ) {
+        player.x = newPos.x;
+        player.y = newPos.y;
+    }
 
-    // let p = pTop * 25 + pBottom;
-    // if (maps.MAPS[player.map][p] > 0)
-    //     return;
+}
 
-    player.x = newPos.x;
-    player.y = newPos.y;
+function handleCollision(pos) {
+    let tile = gameState.map[pos];
+
+    if (tile == 1) {
+        return false;
+    }
+    else if(tile == 2) {
+        gameState.map[pos] = 0;
+    }
+        
+    
+    return true;
 }
