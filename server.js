@@ -1,14 +1,14 @@
 // Dependencies
-var express = require('express');
-var http = require('http');
-var path = require('path');
-var socketIO = require('socket.io');
-var maps = require('./shared/maps');
-var values = require('./shared/values');
+let express = require('express');
+let http = require('http');
+let path = require('path');
+let socketIO = require('socket.io');
+let maps = require('./shared/maps');
+let values = require('./shared/values');
 
-var app = express();
-var server = http.Server(app);
-var io = socketIO(server);
+let app = express();
+let server = http.Server(app);
+let io = socketIO(server);
 
 app.set('port', 5000);
 app.use('/static', express.static(__dirname + '/static'));
@@ -25,9 +25,8 @@ server.listen(5000, () => {
     console.log('Starting server on port 5000');
 });
 
-// WebSocket handlers
-
-var gameState = {
+//The amazing game state object
+let gameState = {
     players: {},
     map: [],
     mapUs: new Date()
@@ -35,6 +34,7 @@ var gameState = {
 
 gameState.map = maps.MAPS[0];
 
+// WebSocket handlers
 io.on('connection', (socket) => {
 
     //join
@@ -110,7 +110,7 @@ setInterval(() => {
     }
 }, 59000);
 
-var nCounter = 0;
+let nCounter = 0;
 
 function getName() {
     let n = values.NAMES[nCounter % values.NAMES.length];
@@ -125,6 +125,10 @@ function getName() {
     if (existing > 0) n = n + "_" + existing;
 
     nCounter++;
+
+    if(nCounter > 8) //Simple overflow protection, lol
+        nCounter = 0;
+
     return n;
 }
 

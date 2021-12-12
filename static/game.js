@@ -52,17 +52,18 @@ setInterval(() => {
     socket.emit('movement', movement);
 }, 1000 / 60);
 
-var canvas = document.getElementById('canvas');
-canvas.width = GRID_WIDTH + 150;
-canvas.height = GRID_HEIGHT;
-
-var context = canvas.getContext('2d');
 
 socket.on('state', (state) => {
     drawScreen(state.players, state.map, state.mapUs);
 });
 
 // DRAWING
+let canvas = document.getElementById('canvas');
+canvas.width = GRID_WIDTH + 150; //Add width here to make room for the scoreboard
+canvas.height = GRID_HEIGHT;
+
+let context = canvas.getContext('2d');
+
 let img = new Image();
 img.src = '/static/sprite1.png';
 
@@ -141,8 +142,8 @@ function drawSprite(imgX, imgY, locX, locY) {
 }
 
 function drawPlayers(players) {
-    for (var id in players) {
-        var player = players[id];
+    for (let id in players) {
+        let player = players[id];
 
         drawSprite(player.sprite % 4 + (player.direction > 0 ? 4 : 0), (player.sprite % 2) + 1, player.x, player.y);
 
@@ -159,12 +160,10 @@ function drawPlayers(players) {
     }
 }
 
-
-
 function drawScoreboard(players) {
     let y = 40;
-    for (var id in players) {
-        var player = players[id];
+    for (let id in players) {
+        let player = players[id];
 
         context.font = "20px Arial";
 
