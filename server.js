@@ -206,7 +206,7 @@ function handleCollision(pos, player) {
 
         let p = Math.floor(Math.random() * 2);
         let b = new Date();
-        b.setSeconds(b.getSeconds() + 10);
+        b.setSeconds(b.getSeconds() + 15);
 
         if (p == 0)
             player.speedBoost = b;
