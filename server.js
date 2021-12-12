@@ -73,17 +73,28 @@ setInterval(() => {
 
 //Present spawn interval
 setInterval(() => {
+    trySpawnPresent();
+}, 5000);
+
+function trySpawnPresent() {
     let numPres = gameState.map.filter(x => x == 2 || x == 3).length;
 
     if (numPres < 5) {
-        let pos = Math.floor(Math.random() * gameState.map.length);
+        let pos;
+
+        let available = false;
+        while (!available) {
+            pos = Math.floor(Math.random() * gameState.map.length);
+            available = gameState.map[pos] == 0;
+        }
+
         if (gameState.map[pos] == 0) {
             gameState.map[pos] = 2;
             gameState.mapUs = new Date();
             sendState();
         }
     }
-}, 5000);
+}
 
 //Bonus spawn interval
 setInterval(() => {
