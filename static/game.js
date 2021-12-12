@@ -136,7 +136,7 @@ function drawPlayers(players) {
     for (var id in players) {
         var player = players[id];
 
-        drawSprite(player.sprite % 4, (player.sprite % 2) + 1, player.x, player.y);
+        drawSprite(player.sprite % 4 + (player.direction > 0 ? 4 : 0), (player.sprite % 2) + 1, player.x, player.y);
 
         if (player.extraPoints != null || player.speedBoost != null)
             drawSprite(16, (player.sprite % 4) + 5, player.x, player.y);

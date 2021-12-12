@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
         gameState.players[socket.id] = {
             x: values.SPRITE_SIZE * 5,
             y: values.SPRITE_SIZE * 5,
+            direction: 0,
             name: getName(),
             points: 0,
             sprite: 0,
@@ -138,17 +139,20 @@ function movePlayer(data, id) {
 
     let newPos = {
         x: player.x,
-        y: player.y
+        y: player.y,
+        direction: player.direction
     };
 
     if (data.left) {
         newPos.x -= moveSpeed;
+        newPos.direction = 1;
     }
     if (data.up) {
         newPos.y -= moveSpeed;
     }
     if (data.right) {
         newPos.x += moveSpeed;
+        newPos.direction = 0;
     }
     if (data.down) {
         newPos.y += moveSpeed;
@@ -177,7 +181,7 @@ function movePlayer(data, id) {
 
         player.x = newPos.x;
         player.y = newPos.y;
-
+        player.direction = newPos.direction;
     }
 
 }
