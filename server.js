@@ -110,6 +110,21 @@ setInterval(() => {
     }
 }, 59000);
 
+//Grandmother spawn interval
+setInterval(() => {
+    let numGrandma = gameState.map.filter(x => x == 4).length;
+
+    if (numGrandma > 0)
+        return;
+
+    let pos = Math.floor(Math.random() * gameState.map.length);
+    if (gameState.map[pos] == 0) {
+        gameState.map[pos] = 4;
+        gameState.mapUs = new Date();
+        sendState();
+    }
+}, 65000);
+
 let nCounter = 0;
 
 function getName() {
@@ -126,7 +141,7 @@ function getName() {
 
     nCounter++;
 
-    if(nCounter > 8) //Simple overflow protection, lol
+    if (nCounter > 8) //Simple overflow protection, lol
         nCounter = 0;
 
     return n;
@@ -211,6 +226,14 @@ function handleCollision(pos, player) {
         gameState.map[pos] = 0;
         gameState.mapUs = new Date();
         player.points++;
+
+        if (player.extraPoints != null)
+            player.points += 2;
+    }
+    else if (tile == 4) {
+        gameState.map[pos] = 0;
+        gameState.mapUs = new Date();
+        player.points += 15;
 
         if (player.extraPoints != null)
             player.points += 2;

@@ -81,6 +81,9 @@ function drawMap(map) {
                 case 3:
                     drawSprite(4, 0, j * 32, i * 32);
                     break;
+                case 4:
+                    drawSprite(8, 2, j * 32, i * 32);
+                    break;
                 case 11:
                     drawSprite(11, 0, j * 32, i * 32);
                     break;
